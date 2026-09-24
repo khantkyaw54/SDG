@@ -1,2 +1,56 @@
+html,
+body,
+#app {
+  margin: 0;
+  min-height: 100%;
+}
 
+body {
+  margin: 0;
+}
+
+.intro-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  background: #111;
+  color: #fff;
+  overflow: hidden;
+}
+
+.intro-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(42px, 9vw, 110px);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  perspective: 800px;
+}
+
+.intro-logo span {
+  display: inline-block;
+}
+
+.intro-space {
+  width: 0.5em;
+}
+
+.intro-line {
+  width: min(420px, 70vw);
+  height: 2px;
+  margin-top: 24px;
+  background: #fff;
+  transform-origin: left center;
+}
+
+.intro-tagline {
+  margin-top: 24px;
+  color: #ccc;
+  font-size: 14px;
+  text-align: center;
+}
 /*# sourceMappingURL=style.css.map */
