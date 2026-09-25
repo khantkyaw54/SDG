@@ -1,0 +1,36 @@
+.start-page {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+
+    background: #111;
+    color: #fff;
+
+    overflow: hidden;
+}
+
+.start-page__content {
+    text-align: center;
+}
+
+.start-page__logo {
+    margin: 0;
+
+    color: #fff;
+
+    font-size: clamp(42px, 10vw, 100px);
+    font-weight: 900;
+    line-height: 1;
+
+    letter-spacing: 0.05em;
+}
+
+.start-page__tagline {
+    margin: 24px 0 0;
+
+    color: #ccc;
+
+    font-size: 14px;
+    line-height: 1.8;
+}
