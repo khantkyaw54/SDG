@@ -6,7 +6,7 @@ export default function Select() {
     return (
         <main className="select-page">
             <div className="select-container">
-                <h1 className="select-title">Select User Type</h1>
+                <h1 className="select-title">どの立場で街とつながりますか？</h1>
 
                 <button
                     className="select-btn"
@@ -17,14 +17,14 @@ export default function Select() {
 
                 <button
                     className="select-btn"
-                    onClick={() => alert("Coming Soon")}
+                    onClick={() => navigate("/shop")}
                 >
                     店舗
                 </button>
 
                 <button
                     className="select-btn"
-                    onClick={() => alert("Coming Soon")}
+                    onClick={() => navigate("/government")}
                 >
                     行政
                 </button>
