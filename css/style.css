@@ -27,4 +27,57 @@
   font-size: 14px;
   line-height: 1.8;
 }
+
+/* =========================
+   Select Page
+========================= */
+.select-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f5f5f5;
+}
+
+.select-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 300px;
+}
+
+.select-title {
+  text-align: center;
+  margin-bottom: 24px;
+  font-size: 28px;
+  font-weight: bold;
+  color: #333;
+}
+
+.select-btn {
+  padding: 18px;
+  font-size: 22px;
+  font-weight: bold;
+  border: none;
+  border-radius: 14px;
+  background: white;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+  transition: 0.3s;
+}
+
+.select-btn:hover {
+  transform: translateY(-3px);
+  background: #ff6b35;
+  color: white;
+}
+
+.map-page {
+  min-height: 100vh;
+}
+
+.map-page__container {
+  width: 100%;
+  height: 100vh;
+}
 /*# sourceMappingURL=style.css.map */

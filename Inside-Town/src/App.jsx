@@ -6,6 +6,9 @@ import {
 
 import Start from "./pages/Start";
 import Select from "./pages/Select";
+import Map from "./pages/Map";
+
+
 
 function App() {
   return (
@@ -13,6 +16,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Start />} />
         <Route path="/select" element={<Select />} />
+        <Route path="/map" element={<Map />} />
       </Routes>
     </BrowserRouter>
   );
