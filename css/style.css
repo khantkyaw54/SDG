@@ -73,11 +73,25 @@
 }
 
 .map-page {
+  width: 100%;
   min-height: 100vh;
 }
 
 .map-page__container {
   width: 100%;
   height: 100vh;
+}
+
+.shop-popup {
+  min-width: 150px;
+}
+.shop-popup strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 16px;
+}
+.shop-popup p {
+  margin: 4px 0;
+  font-size: 13px;
 }
 /*# sourceMappingURL=style.css.map */

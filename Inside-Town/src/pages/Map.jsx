@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
 import {
     Map as MapLibreMap,
@@ -8,10 +9,12 @@ import {
 } from "maplibre-gl";
 
 import "maplibre-gl/dist/maplibre-gl.css";
+import { shops } from "../data/shops";
 
 export default function Map() {
     const mapContainer = useRef(null);
     const map = useRef(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (map.current) return;
@@ -31,7 +34,6 @@ export default function Map() {
                         attribution: "&copy; OpenStreetMap contributors",
                     },
                 },
-
                 layers: [
                     {
                         id: "osm",
@@ -50,39 +52,29 @@ export default function Map() {
             "top-right"
         );
 
-        const shops = [
-            {
-                id: 1,
-                name: "喫茶あさひ",
-                category: "カフェ",
-                lng: 136.8815,
-                lat: 35.1709,
-            },
-            {
-                id: 2,
-                name: "洋食みなみ",
-                category: "洋食",
-                lng: 136.886,
-                lat: 35.169,
-            },
-            {
-                id: 3,
-                name: "甘味処こはる",
-                category: "和菓子",
-                lng: 136.878,
-                lat: 35.173,
-            },
-        ];
-
         shops.forEach((shop) => {
+            const popupContent = document.createElement("div");
+
+            popupContent.className = "shop-popup";
+
+            popupContent.innerHTML = `
+        <strong>${shop.name}</strong>
+        <p>${shop.category}</p>
+        <p>${shop.address}</p>
+        <button class="shop-popup__button">
+          詳細を見る
+        </button>
+      `;
+
+            popupContent
+                .querySelector(".shop-popup__button")
+                .addEventListener("click", () => {
+                    navigate(`/detail/${shop.id}`);
+                });
+
             const popup = new Popup({
                 offset: 25,
-            }).setHTML(`
-        <div>
-          <strong>${shop.name}</strong>
-          <p>${shop.category}</p>
-        </div>
-      `);
+            }).setDOMContent(popupContent);
 
             new Marker({
                 color: "#e85d3f",
@@ -92,11 +84,35 @@ export default function Map() {
                 .addTo(map.current);
         });
 
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const userLng = position.coords.longitude;
+                const userLat = position.coords.latitude;
+
+                map.current.flyTo({
+                    center: [userLng, userLat],
+                    zoom: 15,
+                });
+
+                new Marker({
+                    color: "#2563eb",
+                })
+                    .setLngLat([userLng, userLat])
+                    .setPopup(
+                        new Popup().setHTML("<strong>現在地</strong>")
+                    )
+                    .addTo(map.current);
+            },
+            (error) => {
+                console.error(error);
+            }
+        );
+
         return () => {
             map.current?.remove();
             map.current = null;
         };
-    }, []);
+    }, [navigate]);
 
     return (
         <main className="map-page">
