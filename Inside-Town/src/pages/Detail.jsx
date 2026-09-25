@@ -1,12 +1,14 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { shops } from "../data/shops";
+import { getShops } from "../data/shop_storage";
 
 export default function Detail() {
     const { id } = useParams();
+    const [shops] = useState(getShops);
     const navigate = useNavigate();
 
     const shop = shops.find(
-        (shop) => shop.id === Number(id)
+        (shop) => String(shop.id) === id
     );
 
     if (!shop) {
@@ -25,6 +27,7 @@ export default function Detail() {
 
             <p>{shop.address}</p>
 
+            <p>{shop.hours}</p>
             <p>{shop.description}</p>
         </main>
     );
