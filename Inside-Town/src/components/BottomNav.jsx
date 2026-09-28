@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 const items = [
   { to: "/map", icon: "map", label: "マップ" },
   { to: "/search", icon: "search", label: "検索" },
-  { to: "/user", icon: "user", label: "ユーザー" },
+  { to: "/user", icon: "user", label: "マイページ" },
 ];
 
 export default function BottomNav() {
@@ -19,8 +19,8 @@ export default function BottomNav() {
         >
           <span className="bottom-nav__icon">
             <svg
-              width="22"
-              height="22"
+              width="32"
+              height="32"
               fill="none"
               stroke="currentColor"
               strokeWidth="1.7"

@@ -209,7 +209,7 @@
   min-height: 44px;
   border: 0;
   background: transparent;
-  color: #8c3d20;
+  color: #237c72;
   padding: 0;
 
   &[hidden] {
@@ -474,7 +474,7 @@
     width: fit-content;
     border: 1px solid #ffffff;
     border-radius: 16px;
-    background: #faf7f2f5;
+    background: #fdfcfbf5;
     box-shadow: 0 4px 20px #2b2d420a;
 
     strong {
@@ -507,7 +507,7 @@
   &__discovery {
     padding-top: 16px;
     border-radius: 20px;
-    background: #faf7f2fa;
+    background: #fdfcfbfa;
     box-shadow: 0 8px 32px #2b2d4214;
   }
 
@@ -597,9 +597,9 @@
   box-shadow: 0 2px 8px #2b2d420a;
 
   &.is-active {
-    background: #fff3ec;
-    color: #a34420;
-    border-color: #e9b79c;
+    background: #e2f2ef;
+    color: #237c72;
+    border-color: #7bc4b9;
   }
 }
 
@@ -642,8 +642,8 @@
   }
 
   &:is(button):hover {
-    border-color: #e1a889;
-    background: #fffdf9;
+    border-color: #7bc4b9;
+    background: #f7fcfa;
   }
 
   &--selected {
@@ -662,7 +662,7 @@
     height: 36px;
     border: 3px solid white;
     border-radius: 50%;
-    box-shadow: 0 3px 10px #733b2638;
+    box-shadow: 0 3px 10px #34516438;
   }
 
   &__label {
@@ -671,7 +671,7 @@
     max-width: none;
     white-space: nowrap;
     padding: 5px 8px;
-    color: #664b3e;
+    color: #345164;
     font-size: 11px;
     border: 1px solid #eadfd4;
   }
@@ -701,7 +701,7 @@
   }
 
   &__item.is-active .bottom-nav__icon {
-    background: #fbe9de;
+    background: #e2f2ef;
   }
 }
 
@@ -770,7 +770,7 @@
   max-width: calc(100% - 32px);
   padding: 16px;
   background: white;
-  border: 1px solid #e1a889;
+  border: 1px solid #7bc4b9;
   border-radius: 12px;
   font-size: 13px;
 
@@ -781,7 +781,14 @@
     border: 0;
     border-radius: 8px;
     padding: 8px 12px;
-    background: #e06a3b;
+    background: #2e9d8f;
     color: white;
   }
+}
+
+.bottom-nav {
+  border-top: 0;
+  &__item { color: #2e9d8f; font-size: 12px; }
+  &__icon { height: 36px; }
+  &__item.is-active .bottom-nav__icon { background: transparent; }
 }
