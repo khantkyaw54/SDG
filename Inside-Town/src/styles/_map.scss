@@ -24,7 +24,7 @@
     z-index: 2;
     pointer-events: none;
 
-    > * {
+    >* {
       pointer-events: auto;
     }
   }
@@ -483,7 +483,7 @@
       letter-spacing: 0.16em;
     }
 
-    div > span {
+    div>span {
       display: block;
       margin-top: 4px;
       font-size: 10px;
@@ -519,7 +519,7 @@
       font-size: 18px;
     }
 
-    > div > span {
+    >div>span {
       color: #948575;
       font-size: 9px;
       letter-spacing: 0.18em;
@@ -736,6 +736,7 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
+
   .c-map_shop,
   .c-map_filter {
     transition:
@@ -747,7 +748,7 @@
 .c-map_shop--selected {
   flex-wrap: wrap;
 
-  > div {
+  >div {
     flex: 1 0 100%;
   }
 }
@@ -788,7 +789,17 @@
 
 .bottom-nav {
   border-top: 0;
-  &__item { color: #2e9d8f; font-size: 12px; }
-  &__icon { height: 36px; }
-  &__item.is-active .bottom-nav__icon { background: transparent; }
+
+  &__item {
+    color: #2e9d8f;
+    font-size: 12px;
+  }
+
+  &__icon {
+    height: 36px;
+  }
+
+  &__item.is-active .bottom-nav__icon {
+    background: transparent;
+  }
 }
