@@ -14,7 +14,7 @@ export function createMapStyle(apiKey) {
       geoapify: {
         type: "raster",
         tiles: [
-          `https://maps.geoapify.com/v1/tile/osm-bright-smooth/{z}/{x}/{y}@2x.png?apiKey=${encodeURIComponent(apiKey)}`,
+          `https://maps.geoapify.com/v1/tile/osm-bright/{z}/{x}/{y}@2x.png?apiKey=${encodeURIComponent(apiKey)}`,
         ],
         tileSize: 256,
         maxzoom: 20,
