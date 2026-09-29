@@ -30,7 +30,7 @@ export default function Start() {
                     y: 0,
                     duration: 1,
                     ease: "power4.out",
-                }
+                },
             );
 
             tl.fromTo(
@@ -45,7 +45,7 @@ export default function Start() {
                     duration: 0.7,
                     ease: "power2.out",
                 },
-                "-=0.3"
+                "-=0.3",
             );
 
             tl.to({}, { duration: 1 });
@@ -67,7 +67,7 @@ export default function Start() {
         <main className="start-page" ref={pageRef}>
             <div className="start-page__content">
                 <h1 ref={logoRef} className="start-page__logo">
-                    INSIDE TOWN
+                    めぐるっと
                 </h1>
 
                 <p ref={taglineRef} className="start-page__tagline">
