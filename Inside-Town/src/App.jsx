@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import Start from "./pages/Start";
+import { AuthScreen, RegistrationScreen, RoleScreen, StoryScreen } from "./pages/onboarding";
 import Select from "./pages/Select";
 import Map from "./pages/Map";
 import Detail from "./pages/Detail";
@@ -14,7 +14,15 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Start />} />
+        <Route path="/" element={<StoryScreen key="splash" step="splash" />} />
+        <Route path="/intro" element={<StoryScreen key="intro" step="intro" />} />
+        <Route path="/auth" element={<AuthScreen />} />
+        <Route path="/role-select" element={<RoleScreen />} />
+        {["register", "verify", "town-register", "town-verify", "confirm"].map((step) => (
+          <Route key={step} path={`/${step}`} element={<RegistrationScreen key={step} step={step} />} />
+        ))}
+        <Route path="/complete" element={<StoryScreen key="complete" step="complete" />} />
+        <Route path="/guide" element={<StoryScreen key="guide" step="guide" />} />
         <Route path="/select" element={<Select />} />
         <Route path="/map" element={<Map />} />
         <Route path="/detail/:id" element={<Detail />} />

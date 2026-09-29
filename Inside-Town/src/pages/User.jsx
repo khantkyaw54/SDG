@@ -1,4 +1,6 @@
 import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { readProfile } from "../data/onboarding_storage";
 import BottomNav from "../components/BottomNav";
 
 const features = [
@@ -20,7 +22,8 @@ function Icon({ name }) {
 }
 
 export default function User() {
-    const [profile, setProfile] = useState(null);
+    const navigate = useNavigate();
+    const [profile, setProfile] = useState(() => readProfile()?.nickname || null);
     const [panel, setPanel] = useState(null);
     const dialog = useRef(null);
 
@@ -58,8 +61,8 @@ export default function User() {
                 </div>
             ) : (
                 <div className="p-user__guest">
-                    <button onClick={() => openPanel("新規登録", "アカウント登録は準備中です。表示名を入力してマイページをプレビューできます。", "preview")}>新規登録</button>
-                    <button onClick={() => openPanel("ログイン", "ログインは準備中です。表示名を入力してマイページをプレビューできます。", "preview")}>ログイン</button>
+                    <button onClick={() => navigate("/role-select")}>新規登録</button>
+                    <button onClick={() => navigate("/auth?mode=login")}>ログイン</button>
                 </div>
             )}
             <dialog className="c-user_dialog" ref={dialog}>

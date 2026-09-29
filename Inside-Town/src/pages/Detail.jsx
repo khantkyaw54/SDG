@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import BottomNav from "../components/BottomNav";
+import ShopInfoTab from "../components/shop_info_tab";
+import { Link } from "react-router-dom";
 import { getShops } from "../data/shop_storage";
 
 export default function Detail() {
@@ -10,7 +13,7 @@ export default function Detail() {
   const shop = shops.find((shop) => String(shop.id) === id);
 
   if (!shop) {
-    return <p>お店が見つかりません。</p>;
+    return <main className="detail-page"><p>お店が見つかりません。</p><Link to="/map">地図に戻る</Link><BottomNav /></main>;
   }
 
   return (
@@ -21,10 +24,10 @@ export default function Detail() {
 
       <h1>{shop.name}</h1>
 
-      <p>{shop.address}</p>
-
-      <p>{shop.hours}</p>
+      <ShopInfoTab shop={shop} />
       <p>{shop.description}</p>
+      <Link className="c-flow_button" to={`/map?shop=${shop.id}`}>地図でお店を見る</Link>
+      <BottomNav />
     </main>
   );
 }
