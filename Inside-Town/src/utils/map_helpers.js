@@ -42,31 +42,18 @@ export function focusLocation(
   const canvas = instance.getContainer();
   const page = canvas.closest(".p-map");
   const bounds = canvas.getBoundingClientRect();
-  const panel = page.querySelector(".p-map__discovery").getBoundingClientRect();
+  const selected = page.classList.contains("has-shop");
+  const panel = page.querySelector(selected ? ".c-shop_sheet" : ".p-map__discovery").getBoundingClientRect();
   const top = page.querySelector(".p-map__top").getBoundingClientRect();
-  const desktop = bounds.width >= 768;
-  const padding = desktop
-    ? {
-      top: 32,
-      bottom: 48,
-      left: Math.min(
-        Math.ceil(panel.right - bounds.left + 32),
-        bounds.width / 2,
-      ),
-      right: 64,
-    }
-    : {
-      top: Math.min(
-        Math.ceil(top.bottom - bounds.top + 16),
-        bounds.height * 0.3,
-      ),
-      bottom: Math.min(
-        Math.ceil(bounds.bottom - panel.top + 24),
-        bounds.height * 0.45,
-      ),
-      left: 40,
-      right: 40,
-    };
+  const padding = {
+    top: selected ? 8 : Math.min(Math.ceil(top.bottom - bounds.top + 16), bounds.height * 0.3),
+    bottom: Math.min(
+      Math.ceil(bounds.bottom - panel.top + (selected ? 0 : 24)),
+      bounds.height * (selected ? 0.88 : 0.45),
+    ),
+    left: 40,
+    right: 40,
+  };
   instance.resize();
   const camera = { center: coordinates, zoom, padding };
   if (animate) instance.flyTo(camera);
@@ -78,6 +65,7 @@ export function createShopMarker(shop, map, selectedId, onSelect) {
   const button = document.createElement("button");
   button.type = "button";
   button.className = `c-map_pin${shop.id === selectedId ? " is-selected" : ""}`;
+  button.style.setProperty("--pin-color", ({ カフェ: "#83bb58", 洋食: "#ff9c25", 和菓子: "#fa8198" })[shop.category] || "#4a9bff");
   button.setAttribute("aria-label", `${shop.name}を表示`);
   const dot = document.createElement("span");
   dot.className = "c-map_pin__dot";

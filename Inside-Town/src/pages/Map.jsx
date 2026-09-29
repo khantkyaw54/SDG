@@ -10,6 +10,7 @@ import {
 import "maplibre-gl/dist/maplibre-gl.css";
 import { getShops } from "../data/shop_storage";
 import BottomNav from "../components/BottomNav";
+import ShopBottomSheet from "../components/shop_bottom_sheet";
 import { Link } from "react-router-dom";
 
 import { apiKey, searchAddress } from "../utils/geoapify";
@@ -154,6 +155,14 @@ function MapView() {
         });
     }, [category, selected]);
 
+    useEffect(() => {
+        if (!selected) return;
+        const timer = window.setTimeout(() => {
+            if (map.current) focusLocation(map.current, [selected.lng, selected.lat]);
+        }, 340);
+        return () => window.clearTimeout(timer);
+    }, [selected]);
+
     // 検索 → 地図を移動 → 検索結果のピンを表示。
     const handleSearch = async (event) => {
         event.preventDefault();
@@ -210,7 +219,7 @@ function MapView() {
     }
 
     return (
-        <main className="p-map">
+        <main className={`p-map ${selected ? "has-shop" : ""}`}>
             <div
                 ref={container}
                 className="p-map__canvas"
@@ -235,7 +244,7 @@ function MapView() {
                 </div>
                 <form className="c-map_search" onSubmit={handleSearch}>
                     <span className="c-map_search__brand" aria-hidden="true">
-                        i<span>.</span>
+                        LOGO
                     </span>
                     <input
                         type="search"
@@ -304,81 +313,19 @@ function MapView() {
                     </div>
                 )}
             </div>
-            <section className="p-map__discovery" aria-label="掲載されているお店">
-                <div className="p-map__heading">
-                    <div>
-                        <span>LOCAL DISCOVERIES</span>
-                        <h1>
-                            {selected ? "街で見つけた、いいお店。" : "地元の小さなお店を発見"}
-                        </h1>
-                    </div>
-                    <span className="p-map__count">{visibleShops.length}件</span>
+            <details className="p-map__discovery" inert={Boolean(selected)}>
+                <summary>近くのお店 <span>{visibleShops.length}件</span></summary>
+                <div className="p-map__shops">
+                    {visibleShops.map((shop) => (
+                        <button className="c-map_shop" key={shop.id} onClick={() => chooseShop(shop)} type="button">
+                            <span className="c-map_shop__category">{shop.category}</span>
+                            <h2>{shop.name}</h2>
+                            <p>{shop.address}</p>
+                        </button>
+                    ))}
                 </div>
-                {selected ? (
-                    <article className="c-map_shop c-map_shop--selected">
-                        <div>
-                            <span className="c-map_shop__category">{selected.category}</span>
-                            <h2>{selected.name}</h2>
-                            <p>{selected.address}</p>
-                        </div>
-                        <button
-                            className="c-map_shop__close"
-                            type="button"
-                            aria-label="お店の選択を解除"
-                            onClick={() => setSelected(null)}
-                        >
-                            ×
-                        </button>
-                        <button
-                            className="c-map_shop__locate"
-                            type="button"
-                            onClick={() => chooseShop(selected)}
-                        >
-                            ピンの位置へ
-                        </button>
-                        <button
-                            className="c-map_shop__detail"
-                            type="button"
-                            onClick={() => navigate(`/detail/${selected.id}`)}
-                        >
-                            お店の詳細を見る →
-                        </button>
-                    </article>
-                ) : (
-                    <div className="p-map__shops">
-                        {visibleShops.map((shop) => (
-                            <button
-                                className="c-map_shop"
-                                key={shop.id}
-                                onClick={() => chooseShop(shop)}
-                                type="button"
-                            >
-                                <span className="c-map_shop__category">
-                                    <svg
-                                        width="16"
-                                        height="16"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="1.7"
-                                        aria-hidden="true"
-                                    >
-                                        <use
-                                            href={`/map_icons.svg#${categoryIcon(shop.category)}`}
-                                        />
-                                    </svg>
-                                    {shop.category}
-                                </span>
-                                <h2>{shop.name}</h2>
-                                <p>{shop.address}</p>
-                                <span className="c-map_shop__link">地図で見る ↗</span>
-                            </button>
-                        ))}
-                    </div>
-                )}
-                <p className="p-map__sample">
-                    サンプル店舗と、このブラウザで追加した店舗を表示
-                </p>
-            </section>
+            </details>
+            <ShopBottomSheet shop={selected} onClose={() => setSelected(null)} />
             <BottomNav />
         </main>
     );
