@@ -27,6 +27,7 @@ export function createMapStyle(apiKey) {
         id: "geoapify",
         type: "raster",
         source: "geoapify",
+        paint: { "raster-saturation": -0.45, "raster-contrast": -0.15, "raster-brightness-min": 0.16 },
       },
     ],
   };

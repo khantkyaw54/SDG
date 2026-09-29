@@ -244,7 +244,7 @@ function MapView() {
                 </div>
                 <form className="c-map_search" onSubmit={handleSearch}>
                     <span className="c-map_search__brand" aria-hidden="true">
-                        LOGO
+                        まちぐる
                     </span>
                     <input
                         type="search"
