@@ -7,6 +7,7 @@ export const shops = [
         description: "地元で長く愛されている喫茶店です。",
         lng: 136.8815,
         lat: 35.1709,
+
     },
     {
         id: 2,
