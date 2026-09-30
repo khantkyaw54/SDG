@@ -130,7 +130,7 @@ export function RegistrationScreen({ step }) {
         </>}
         {step === "verify" && <>
           <p className="p-onboarding__note">確認コードを入力してください。<br />デモ用コード：123456（メール・SMSは送信されません）</p>
-          <label className="p-onboarding__code_label">確認コード<input className="p-onboarding__code" aria-label="確認コード" value={code} onChange={(event) => setCode(event.target.value.replace(/\D/g, "").slice(0, 6))} inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" required maxLength={6} placeholder="——————" /></label>
+          <label className="p-onboarding__code_label">確認コード<input className="p-onboarding__code" aria-label="確認コード" value={code} onChange={(event) => setCode(event.target.value.replace(/\D/g, "").slice(0, 6))} inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" required maxLength={6} placeholder="_ _ _ _ _ _" /></label>
         </>}
         {step === "town-register" && <>
           <p className="p-onboarding__note">住んでいる町を選択してください。<br />町の情報はデモプロフィールに保存されます。</p>

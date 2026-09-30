@@ -1,0 +1,168 @@
+@use "variables" as *;
+
+.p-search {
+  min-height: 100svh;
+  max-width: 540px;
+  margin-inline: auto;
+  padding: clamp(64px, 10svh, 112px) 24px 112px;
+  background: #2e9b8e;
+  color: #fff;
+
+  &__content {
+    max-width: 360px;
+    margin-inline: auto;
+  }
+
+  fieldset {
+    padding: 0;
+    margin-inline: 0;
+    border: 0;
+    min-width: 0;
+  }
+
+  &__heading {
+    display: block;
+    margin-bottom: 16px;
+    padding: 0 8px;
+    font-size: 18px;
+    font-weight: 400;
+  }
+
+  &__input, &__summary {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    min-height: 52px;
+    padding: 8px 16px;
+    border: 0;
+    border-radius: 9999px;
+    background: #fdfcfb;
+    color: $color-ink;
+
+    svg { flex-shrink: 0; color: #35b69e; }
+    input {
+      min-width: 0;
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      min-height: 36px;
+    }
+  }
+
+  &__area { margin-top: 40px; margin-bottom: 24px; }
+  &__selects {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+
+    select {
+      width: 100%;
+      min-width: 0;
+      min-height: 44px;
+      padding: 8px 12px;
+      border: 0;
+      border-radius: 9999px;
+      font: inherit;
+      font-size: 14px;
+      color: $color-ink;
+      background: #fdfcfb;
+    }
+  }
+
+  &__genre_grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 8px; }
+  &__genre {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 48px;
+    padding: 8px;
+    border: 1px solid #d1eee8;
+    border-radius: 12px;
+    font-size: 12px;
+    cursor: pointer;
+
+    input {
+      appearance: none;
+      margin: 0;
+      width: 16px;
+      height: 16px;
+      border: 1px solid #fff;
+      border-radius: 2px;
+      background: transparent;
+      flex-shrink: 0;
+      cursor: pointer;
+
+      &:checked { background: linear-gradient(135deg, transparent 44%, #fff 45%, #fff 54%, transparent 55%); }
+    }
+    &.is-selected { background: rgba(255, 255, 255, 0.16); border-color: #fff; }
+  }
+
+  &__more {
+    display: block;
+    margin-left: auto;
+    min-height: 44px;
+    padding: 8px 0;
+    border: 0;
+    background: none;
+    color: #fff;
+    font-size: 11px;
+  }
+
+  &__submit {
+    display: block;
+    min-height: 56px;
+    margin: 32px auto 0;
+    padding: 16px 28px;
+    border: 0;
+    border-radius: 9999px;
+    color: $color-ink;
+    background: #fdfcfb;
+    font-size: 14px;
+  }
+
+  &__summary { text-align: left; font-size: 14px; span { overflow-wrap: anywhere; } }
+  &__results_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 8px -8px 32px;
+    p { margin: 0; }
+  }
+  &__filter { min-height: 44px; padding: 8px 16px; border: 0; border-radius: 16px; background: #fdfcfb; color: $color-ink; font-size: 12px; }
+  &__results { display: grid; gap: 24px; padding-inline: 4px; }
+  &__empty { text-align: center; h2 { font-size: 18px; } p { font-size: 14px; line-height: 1.8; } }
+
+  :is(button, input, select, a):focus-visible { outline: 3px solid #e9c46a; outline-offset: 4px; }
+  .bottom-nav { max-width: 540px; margin-inline: auto; height: calc(80px + env(safe-area-inset-bottom)); padding-bottom: env(safe-area-inset-bottom); border: 0; }
+}
+
+.c-search_card {
+  display: flex;
+  min-height: 172px;
+  flex-direction: column;
+  justify-content: center;
+  padding: 24px;
+  border-radius: 12px;
+  background: #fdfcfb;
+  color: $color-ink;
+  text-decoration: none;
+
+  &__category { font-size: 12px; color: #287f74; }
+  h2 { margin: 8px 0; font-size: 20px; overflow-wrap: anywhere; }
+  p { margin: 0; font-size: 12px; overflow-wrap: anywhere; }
+  &__link { margin-top: 16px; font-size: 12px; text-align: right; }
+  &:hover { background: #f0faf7; }
+}
+
+.u-search_visually_hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
