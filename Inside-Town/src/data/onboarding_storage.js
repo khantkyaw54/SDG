@@ -15,19 +15,27 @@ export function saveDraft(values) {
 export function readProfile() {
   try {
     const value = JSON.parse(localStorage.getItem(profileKey) || "null");
-    return typeof value?.nickname === "string" ? value : null;
+    if (typeof value?.nickname !== "string") return null;
+    // Give existing demo profiles a stable account identity without changing their fields.
+    if (typeof value.id !== "string" || !value.id) {
+      value.id = crypto.randomUUID();
+      localStorage.setItem(profileKey, JSON.stringify(value));
+    }
+    return value;
   } catch { return null; }
 }
 
 export function completeRegistration(draft) {
   // This is a local demo profile, never an authentication or identity credential.
   localStorage.setItem(profileKey, JSON.stringify({
+    id: crypto.randomUUID(),
     nickname: draft.nickname,
     role: draft.role,
     prefecture: draft.prefecture,
     city: draft.city,
     demo: true,
   }));
+  window.dispatchEvent(new Event("inside-town-account-change"));
 }
 
 export function destination(role) {

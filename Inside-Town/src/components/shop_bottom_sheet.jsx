@@ -4,27 +4,26 @@ import ShopInfoTab from "./shop_info_tab";
 import ReviewsTab from "./reviews_tab";
 import "../styles/_shop_bottom_sheet.scss";
 
-const wishlistKey = "inside_town_wishlist";
+import { useAccountFavorites } from "../hooks/use_account_favorites";
+import { toggleFavorite } from "../data/favorites_storage";
 
-export default function ShopBottomSheet({ shop, onClose }) {
+export default function ShopBottomSheet({ shop, onClose, onRoute, onCancelRoute, routeStatus }) {
   // Retain the last shop during the CSS exit transition.
   const [displayedShop, setDisplayedShop] = useState(shop);
   if (shop && shop !== displayedShop) setDisplayedShop(shop);
 
   return (
     <section className={`c-shop_sheet ${shop ? "is-open" : ""}`} inert={!shop} aria-hidden={!shop} aria-label="店舗情報">
-      {displayedShop && <ShopContent key={displayedShop.id} shop={displayedShop} open={Boolean(shop)} onClose={onClose} />}
+      {displayedShop && <ShopContent key={displayedShop.id} shop={displayedShop} open={Boolean(shop)} onClose={onClose} onRoute={onRoute} onCancelRoute={onCancelRoute} routeStatus={routeStatus} />}
     </section>
   );
 }
 
-function ShopContent({ shop, open, onClose }) {
+function ShopContent({ shop, open, onClose, onRoute, onCancelRoute, routeStatus }) {
   const [tab, setTab] = useState("info");
   const [message, setMessage] = useState("");
-  const [saved, setSaved] = useState(() => {
-    try { return JSON.parse(localStorage.getItem(wishlistKey) || "[]").includes(String(shop.id)); }
-    catch { return false; }
-  });
+  const { profile, favorites } = useAccountFavorites();
+  const saved = favorites.includes(String(shop.id));
   const closeButton = useRef(null);
   const close = useRef(onClose);
   useEffect(() => { close.current = onClose; }, [onClose]);
@@ -42,11 +41,11 @@ function ShopContent({ shop, open, onClose }) {
 
   const toggleSaved = () => {
     try {
-      const stored = JSON.parse(localStorage.getItem(wishlistKey) || "[]");
-      const ids = Array.isArray(stored) ? stored : [];
-      const next = saved ? ids.filter((id) => id !== String(shop.id)) : [...new Set([...ids, String(shop.id)])];
-      localStorage.setItem(wishlistKey, JSON.stringify(next));
-      setSaved(!saved);
+      if (!profile?.id) {
+        setMessage("行ってみたいお店を保存するにはログインしてください。");
+        return;
+      }
+      toggleFavorite(profile.id, shop.id);
       setMessage("");
     } catch { setMessage("保存できませんでした。ブラウザの保存設定をご確認ください。"); }
   };
@@ -67,7 +66,7 @@ function ShopContent({ shop, open, onClose }) {
           <p className="c-shop_sheet__description">{shop.description || "いつもの街で出会う、地元の小さなお店。街歩きの途中に、立ち寄ってみませんか。"}</p>
         </header>
         <div className="c-shop_sheet__actions">
-          <button type="button" className="c-shop_sheet__action" aria-pressed={saved} onClick={toggleSaved}>{saved ? "行ってみたいに保存済み ✓" : "行ってみたい"}</button>
+          <button type="button" className="c-shop_sheet__action" aria-pressed={saved} onClick={toggleSaved}>{saved ? "行ってみたい ✓" : "行ってみたい"}</button>
           <button type="button" className="c-shop_sheet__action" onClick={() => setMessage("QRコードによる来店確認は準備中です。")}>
             <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor" aria-hidden="true"><path d="M8 3 6 6H3a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-3l-2-3H8Zm4 5a5.5 5.5 0 1 1 0 11 5.5 5.5 0 0 1 0-11Zm0 2a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z" /></svg>
             <span>来店確認<small>QRコードを読み込む</small></span>
@@ -89,6 +88,12 @@ function ShopContent({ shop, open, onClose }) {
         <div key={tab} id="shop-tab-panel" role="tabpanel" aria-labelledby={`shop-tab-${tab}`} className="c-shop_sheet__panel">
           {tab === "info" ? <ShopInfoTab shop={shop} /> : <ReviewsTab />}
         </div>
+        {onRoute && <div className="c-shop_sheet__actions">
+          <button type="button" className="c-shop_sheet__action" onClick={() => routeStatus?.loading ? onCancelRoute() : onRoute(shop)}>
+            {routeStatus?.loading ? "ルート検索をキャンセル" : "ルートを見る"}
+          </button>
+          {routeStatus?.message && <p className="c-shop_sheet__message" role="status">{routeStatus.message}</p>}
+        </div>}
         <Link className="c-shop_sheet__detail" to={`/detail/${shop.id}`}>お店の詳細を見る →</Link>
       </div>
     </>
