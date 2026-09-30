@@ -296,7 +296,7 @@ function MapView() {
                                 strokeWidth="1.7"
                                 aria-hidden="true"
                             >
-                                <use href={`/map_icons.svg#${categoryIcon(item)}`} />
+                                <use href={`${import.meta.env.BASE_URL}map_icons.svg#${categoryIcon(item)}`} />
                             </svg>
                             {item}
                         </button>

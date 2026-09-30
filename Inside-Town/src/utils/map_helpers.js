@@ -78,7 +78,7 @@ export function createShopMarker(shop, map, selectedId, onSelect) {
   icon.setAttribute("stroke-width", "1.8");
   icon.setAttribute("aria-hidden", "true");
   const use = document.createElementNS("http://www.w3.org/2000/svg", "use");
-  use.setAttribute("href", `/map_icons.svg#${categoryIcon(shop.category)}`);
+  use.setAttribute("href", `${import.meta.env.BASE_URL}map_icons.svg#${categoryIcon(shop.category)}`);
   icon.append(use);
   dot.append(icon);
   const label = document.createElement("span");
