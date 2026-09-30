@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
     Map as MapLibreMap,
@@ -6,13 +6,16 @@ import {
     Popup,
     NavigationControl,
     GeolocateControl,
+    setWorkerUrl,
 } from "maplibre-gl";
+import mapWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { getShops } from "../data/shop_storage";
 import BottomNav from "../components/BottomNav";
 import ShopBottomSheet from "../components/shop_bottom_sheet";
 import { Link } from "react-router-dom";
 
+import { currentPosition, requestWalkingRoute, routeSummary, drawRoute, clearRoute } from "../utils/routing";
 import { apiKey, searchAddress } from "../utils/geoapify";
 import {
     categoryIcon,
@@ -20,6 +23,9 @@ import {
     createShopMarker,
     focusLocation,
 } from "../utils/map_helpers";
+
+// Let Vite resolve the worker for both localhost and the /SDG/ production base.
+setWorkerUrl(mapWorkerUrl);
 
 export default function Map() {
     const [params] = useSearchParams();
@@ -38,6 +44,19 @@ function MapView() {
     const markers = useRef([]);
     const searchMarker = useRef(null);
     const request = useRef(null);
+    const routeSession = useRef(null);
+    const [routeStatus, setRouteStatus] = useState(null);
+    const cancelRoute = useCallback(() => {
+        const session = routeSession.current;
+        session?.controller.abort();
+        session?.marker?.remove();
+        if (map.current) {
+            clearRoute(map.current);
+            if (session?.camera) map.current.jumpTo(session.camera);
+        }
+        routeSession.current = null;
+        setRouteStatus(null);
+    }, []);
     const navigate = useNavigate();
     const [query, setQuery] = useState("");
     const [searching, setSearching] = useState(false);
@@ -116,6 +135,7 @@ function MapView() {
                     instance,
                     focusedShop?.id,
                     (clickedShop) => {
+                        cancelRoute();
                         setSelected(clickedShop);
                         focusLocation(instance, [clickedShop.lng, clickedShop.lat]);
                     },
@@ -136,6 +156,9 @@ function MapView() {
         return () => {
             disposed = true;
             request.current?.abort();
+            routeSession.current?.controller.abort();
+            routeSession.current?.marker?.remove();
+            routeSession.current = null;
             searchMarker.current?.remove();
             searchMarker.current = null;
             markers.current.forEach(({ marker }) => marker.remove());
@@ -143,7 +166,7 @@ function MapView() {
             instance?.remove();
             map.current = null;
         };
-    }, [shops, focusedShop]);
+    }, [shops, focusedShop, cancelRoute]);
 
     useEffect(() => {
         markers.current.forEach(({ shop, marker }) => {
@@ -158,7 +181,7 @@ function MapView() {
     useEffect(() => {
         if (!selected) return;
         const timer = window.setTimeout(() => {
-            if (map.current) focusLocation(map.current, [selected.lng, selected.lat]);
+            if (map.current && !routeSession.current) focusLocation(map.current, [selected.lng, selected.lat]);
         }, 340);
         return () => window.clearTimeout(timer);
     }, [selected]);
@@ -167,6 +190,7 @@ function MapView() {
     const handleSearch = async (event) => {
         event.preventDefault();
         if (!query.trim() || !map.current || !ready) return;
+        cancelRoute();
         request.current?.abort();
         const controller = new AbortController();
         request.current = controller;
@@ -204,8 +228,54 @@ function MapView() {
     };
 
     const chooseShop = (shop) => {
+        cancelRoute();
         setSelected(shop);
         if (map.current) focusLocation(map.current, [shop.lng, shop.lat]);
+    };
+
+    const handleRoute = async (shop) => {
+        cancelRoute();
+        if (!map.current || !ready) {
+            setRouteStatus({ message: "地図の読み込みが完了してからお試しください。" });
+            return;
+        }
+        const instance = map.current;
+        const controller = new AbortController();
+        const session = {
+            controller, camera: {
+                center: instance.getCenter(), zoom: instance.getZoom(),
+                bearing: instance.getBearing(), pitch: instance.getPitch(),
+                padding: { top: 0, bottom: 0, left: 0, right: 0 },
+            }
+        };
+        routeSession.current = session;
+        setRouteStatus({ loading: true, message: "現在地から徒歩ルートを検索しています…" });
+        const timeout = window.setTimeout(() => {
+            if (routeSession.current !== session) return;
+            controller.abort();
+            setRouteStatus({ message: "ルート検索がタイムアウトしました。もう一度お試しください。" });
+        }, 30000);
+        try {
+            const origin = await currentPosition(controller.signal);
+            if (controller.signal.aborted) return;
+            const route = await requestWalkingRoute(origin, shop, apiKey, controller.signal);
+            if (controller.signal.aborted || map.current !== instance) return;
+            drawRoute(instance, route, origin, shop);
+            session.marker = new Marker({ color: "#168bff" }).setLngLat([origin.lng, origin.lat]).addTo(instance);
+            session.marker.getElement().setAttribute("aria-label", "ルートの出発地（現在地）");
+            setRouteStatus({ message: `${shop.name}まで ${routeSummary(route)}`, active: true });
+            setSelected(null);
+        } catch (failure) {
+            if (controller.signal.aborted) return;
+            clearRoute(instance);
+            session.marker?.remove();
+            setRouteStatus({
+                message: failure instanceof TypeError
+                    ? "ルートを取得できませんでした。通信環境を確認してください。" : failure.message
+            });
+        } finally {
+            window.clearTimeout(timeout);
+        }
     };
 
     let statusMessage = "";
@@ -242,7 +312,7 @@ function MapView() {
                         <span>いつもの街に、新しい発見。</span>
                     </div>
                 </div>
-                <form className="c-map_search" onSubmit={handleSearch}>
+                {/* <form className="c-map_search" onSubmit={handleSearch}>
                     <span className="c-map_search__brand" aria-hidden="true">
                         まちぐる
                     </span>
@@ -275,7 +345,7 @@ function MapView() {
                             </svg>
                         )}
                     </button>
-                </form>
+                </form> */}
                 <div className="p-map__filters" aria-label="お店のカテゴリ">
                     {categories.map((item) => (
                         <button
@@ -284,6 +354,7 @@ function MapView() {
                             aria-pressed={category === item}
                             className={`c-map_filter ${category === item ? "is-active" : ""}`}
                             onClick={() => {
+                                cancelRoute();
                                 setCategory(item);
                                 setSelected(null);
                             }}
@@ -302,6 +373,12 @@ function MapView() {
                         </button>
                     ))}
                 </div>
+                {routeStatus && (
+                    <div className="p-map__notice" role="status">
+                        {routeStatus.message}
+                        <button type="button" onClick={cancelRoute}>ルートを閉じる</button>
+                    </div>
+                )}
                 {statusMessage && (
                     <div className="p-map__notice" role="status">
                         {statusMessage}
@@ -325,7 +402,8 @@ function MapView() {
                     ))}
                 </div>
             </details>
-            <ShopBottomSheet shop={selected} onClose={() => setSelected(null)} />
+            <ShopBottomSheet shop={selected} onClose={() => { cancelRoute(); setSelected(null); }}
+                onRoute={handleRoute} onCancelRoute={cancelRoute} routeStatus={routeStatus} />
             <BottomNav />
         </main>
     );
