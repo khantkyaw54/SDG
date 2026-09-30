@@ -37,6 +37,8 @@ jobs:
 
       - name: Build
         working-directory: Inside-Town
+        env:
+          VITE_GEOAPIFY_KEY: ${{ secrets.VITE_GEOAPIFY_KEY }}
         run: npm run build
 
       - name: Setup Pages
