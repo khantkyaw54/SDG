@@ -28,7 +28,7 @@ export default function BottomNav() {
               strokeLinejoin="round"
               aria-hidden="true"
             >
-              <use href={`/map_icons.svg#${icon}`} />
+              <use href={`${import.meta.env.BASE_URL}map_icons.svg#${icon}`} />
             </svg>
           </span>
           <span>{label}</span>
