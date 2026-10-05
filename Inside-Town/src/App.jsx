@@ -12,6 +12,7 @@ import Map from "./pages/Map";
 import Detail from "./pages/Detail";
 import Search from "./pages/Search";
 import User from "./pages/User";
+import CheckIn from "./pages/CheckIn";
 
 import ShopPortal from "./pages/shop_portal";
 import GovernmentPortal from "./pages/government_portal";
@@ -68,6 +69,7 @@ function App() {
         <Route path="/detail/:id" element={<Detail />} />
         <Route path="/search" element={<Search />} />
         <Route path="/user" element={<User />} />
+        <Route path="/check-in" element={<CheckIn />} />
         <Route path="/shop" element={<ShopPortal />} />
         <Route path="/government" element={<GovernmentPortal />} />
       </Routes>

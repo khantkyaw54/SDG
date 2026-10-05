@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 const items = [
   { to: "/map", icon: "map", label: "マップ" },
   { to: "/search", icon: "search", label: "検索" },
+  { to: "/check-in", icon: "checkin", label: "来店チェック" },
   { to: "/user", icon: "user", label: "マイページ" },
 ];
 
