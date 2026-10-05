@@ -803,40 +803,135 @@
     background: transparent;
   }
 }
+
 // Mobile map and reference-style sheet share a centered viewport.
 .p-map {
   max-width: 640px;
   min-height: 0;
   color: #345164;
 
-  &__canvas { inset: 0; }
-  &__top { top: max(12px, env(safe-area-inset-top)); left: 12px; right: 12px; width: auto; transition: opacity 180ms; }
-  &__brand { display: none; }
-  &.has-shop &__top, &.has-shop &__discovery { visibility: hidden; opacity: 0; pointer-events: none; }
+  &__canvas {
+    inset: 0;
+  }
+
+  &__top {
+    top: max(12px, env(safe-area-inset-top));
+    left: 12px;
+    right: 12px;
+    width: auto;
+    transition: opacity 180ms;
+  }
+
+  &__brand {
+    display: none;
+  }
+
+  &.has-shop &__top,
+  &.has-shop &__discovery {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+  }
+
   &__discovery {
-    left: 12px; right: 72px; width: auto; bottom: calc(92px + env(safe-area-inset-bottom));
-    padding: 0; border-radius: 16px; background: #fffffff5;
-    summary { display: flex; align-items: center; justify-content: space-between; min-height: 44px; padding: 12px 16px; font-size: 13px; cursor: pointer; }
-    summary span { color: #2fa99a; }
-    &[open] { right: 12px; padding-bottom: 12px; }
+    left: 12px;
+    right: 72px;
+    width: auto;
+    bottom: calc(92px + env(safe-area-inset-bottom));
+    padding: 0;
+    border-radius: 16px;
+    background: #fffffff5;
+
+    summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 44px;
+      padding: 12px 16px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    summary span {
+      color: #2fa99a;
+    }
+
+    &[open] {
+      right: 12px;
+      padding-bottom: 12px;
+    }
   }
-  &__shops { max-height: 160px; }
-  .maplibregl-ctrl-bottom-right { right: 8px; bottom: calc(156px + env(safe-area-inset-bottom)); }
-  .maplibregl-ctrl-bottom-left { bottom: calc(80px + env(safe-area-inset-bottom)); }
-  .maplibregl-user-location-dot { background: #168bff; box-shadow: 0 0 0 12px #168bff25; }
-  .maplibregl-user-location-dot::before { background: #168bff; }
+
+  &__shops {
+    max-height: 160px;
+  }
+
+  .maplibregl-ctrl-bottom-right {
+    right: 8px;
+    bottom: calc(156px + env(safe-area-inset-bottom));
+  }
+
+  .maplibregl-ctrl-bottom-left {
+    bottom: calc(80px + env(safe-area-inset-bottom));
+  }
+
+  .maplibregl-user-location-dot {
+    background: #168bff;
+    box-shadow: 0 0 0 12px #168bff25;
+  }
+
+  .maplibregl-user-location-dot::before {
+    background: #168bff;
+  }
+
   .bottom-nav {
-    left: 0; right: 0; bottom: 0; width: 100%; max-width: 640px;
-    height: calc(80px + env(safe-area-inset-bottom)); border-radius: 0; box-shadow: none; background: white;
-    &__item, &__item.is-active { color: #2fa99a; }
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 640px;
+    height: calc(80px + env(safe-area-inset-bottom));
+    border-radius: 0;
+    box-shadow: none;
+    background: white;
+
+    &__item,
+    &__item.is-active {
+      color: #2fa99a;
+    }
   }
+
   .c-map_pin {
-    width: 48px; height: 56px;
-    &__dot { width: 42px; height: 42px; border: 0; border-radius: 50% 50% 4px 50%; transform: rotate(45deg); background: var(--pin-color, #2fa99a); }
-    svg { transform: rotate(-45deg); width: 24px; height: 24px; }
-    &__label { display: none; }
-    &:focus-visible .c-map_pin__label { display: block; }
+    width: 48px;
+    height: 56px;
+
+    &__dot {
+      width: 42px;
+      height: 42px;
+      border: 0;
+      border-radius: 50% 50% 4px 50%;
+      transform: rotate(45deg);
+      background: var(--pin-color, #2fa99a);
+    }
+
+    svg {
+      transform: rotate(-45deg);
+      width: 24px;
+      height: 24px;
+    }
+
+    &__label {
+      display: none;
+    }
+
+    &:focus-visible .c-map_pin__label {
+      display: block;
+    }
   }
 }
 
-.p-map .c-map_search__brand { font-size: 13px; white-space: nowrap; color: #35a99a; }
+.p-map .c-map_search__brand {
+  font-size: 13px;
+  white-space: nowrap;
+  color: #35a99a;
+}

@@ -28,7 +28,8 @@
     font-weight: 400;
   }
 
-  &__input, &__summary {
+  &__input,
+  &__summary {
     display: flex;
     align-items: center;
     gap: 16px;
@@ -40,7 +41,11 @@
     background: #fdfcfb;
     color: $color-ink;
 
-    svg { flex-shrink: 0; color: #35b69e; }
+    svg {
+      flex-shrink: 0;
+      color: #35b69e;
+    }
+
     input {
       min-width: 0;
       width: 100%;
@@ -51,7 +56,11 @@
     }
   }
 
-  &__area { margin-top: 40px; margin-bottom: 24px; }
+  &__area {
+    margin-top: 40px;
+    margin-bottom: 24px;
+  }
+
   &__selects {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -71,7 +80,12 @@
     }
   }
 
-  &__genre_grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 8px; }
+  &__genre_grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px 8px;
+  }
+
   &__genre {
     display: flex;
     align-items: center;
@@ -94,9 +108,15 @@
       flex-shrink: 0;
       cursor: pointer;
 
-      &:checked { background: linear-gradient(135deg, transparent 44%, #fff 45%, #fff 54%, transparent 55%); }
+      &:checked {
+        background: linear-gradient(135deg, transparent 44%, #fff 45%, #fff 54%, transparent 55%);
+      }
     }
-    &.is-selected { background: rgba(255, 255, 255, 0.16); border-color: #fff; }
+
+    &.is-selected {
+      background: rgba(255, 255, 255, 0.16);
+      border-color: #fff;
+    }
   }
 
   &__more {
@@ -122,20 +142,67 @@
     font-size: 14px;
   }
 
-  &__summary { text-align: left; font-size: 14px; span { overflow-wrap: anywhere; } }
+  &__summary {
+    text-align: left;
+    font-size: 14px;
+
+    span {
+      overflow-wrap: anywhere;
+    }
+  }
+
   &__results_header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin: 8px -8px 32px;
-    p { margin: 0; }
-  }
-  &__filter { min-height: 44px; padding: 8px 16px; border: 0; border-radius: 16px; background: #fdfcfb; color: $color-ink; font-size: 12px; }
-  &__results { display: grid; gap: 24px; padding-inline: 4px; }
-  &__empty { text-align: center; h2 { font-size: 18px; } p { font-size: 14px; line-height: 1.8; } }
 
-  :is(button, input, select, a):focus-visible { outline: 3px solid #e9c46a; outline-offset: 4px; }
-  .bottom-nav { max-width: 540px; margin-inline: auto; height: calc(80px + env(safe-area-inset-bottom)); padding-bottom: env(safe-area-inset-bottom); border: 0; }
+    p {
+      margin: 0;
+    }
+  }
+
+  &__filter {
+    min-height: 44px;
+    padding: 8px 16px;
+    border: 0;
+    border-radius: 16px;
+    background: #fdfcfb;
+    color: $color-ink;
+    font-size: 12px;
+  }
+
+  &__results {
+    display: grid;
+    gap: 24px;
+    padding-inline: 4px;
+  }
+
+  &__empty {
+    text-align: center;
+
+    h2 {
+      font-size: 18px;
+    }
+
+    p {
+      font-size: 14px;
+      line-height: 1.8;
+    }
+  }
+
+  :is(button, input, select, a):focus-visible {
+    outline: 3px solid #e9c46a;
+    outline-offset: 4px;
+  }
+
+  .bottom-nav {
+    max-width: 540px;
+    margin-inline: auto;
+    height: calc(80px + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    border: 0;
+  }
 }
 
 .c-search_card {
@@ -149,11 +216,32 @@
   color: $color-ink;
   text-decoration: none;
 
-  &__category { font-size: 12px; color: #287f74; }
-  h2 { margin: 8px 0; font-size: 20px; overflow-wrap: anywhere; }
-  p { margin: 0; font-size: 12px; overflow-wrap: anywhere; }
-  &__link { margin-top: 16px; font-size: 12px; text-align: right; }
-  &:hover { background: #f0faf7; }
+  &__category {
+    font-size: 12px;
+    color: #287f74;
+  }
+
+  h2 {
+    margin: 8px 0;
+    font-size: 20px;
+    overflow-wrap: anywhere;
+  }
+
+  p {
+    margin: 0;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+  }
+
+  &__link {
+    margin-top: 16px;
+    font-size: 12px;
+    text-align: right;
+  }
+
+  &:hover {
+    background: #f0faf7;
+  }
 }
 
 .u-search_visually_hidden {
