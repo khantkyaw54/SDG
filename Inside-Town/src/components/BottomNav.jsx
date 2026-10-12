@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 const items = [
   { to: "/map", icon: "map", label: "マップ" },
   { to: "/search", icon: "search", label: "検索" },
+  { to: "/check-in", icon: "checkin", label: "来店チェック" },
   { to: "/user", icon: "user", label: "マイページ" },
 ];
 
@@ -28,7 +29,7 @@ export default function BottomNav() {
               strokeLinejoin="round"
               aria-hidden="true"
             >
-              <use href={`/map_icons.svg#${icon}`} />
+              <use href={`${import.meta.env.BASE_URL}map_icons.svg#${icon}`} />
             </svg>
           </span>
           <span>{label}</span>

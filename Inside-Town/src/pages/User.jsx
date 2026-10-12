@@ -1,4 +1,7 @@
 import { useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAccountFavorites } from "../hooks/use_account_favorites";
+import { getShops } from "../data/shop_storage";
 import BottomNav from "../components/BottomNav";
 
 const features = [
@@ -20,7 +23,11 @@ function Icon({ name }) {
 }
 
 export default function User() {
-    const [profile, setProfile] = useState(null);
+    const navigate = useNavigate();
+    const { profile: account, favorites } = useAccountFavorites();
+    const [preview, setProfile] = useState(undefined);
+    const profile = preview === undefined ? account?.nickname : preview;
+    const savedShops = getShops().filter((shop) => favorites.includes(String(shop.id)));
     const [panel, setPanel] = useState(null);
     const dialog = useRef(null);
 
@@ -45,9 +52,9 @@ export default function User() {
                     </button>
                     <div className="p-user__grid">
                         {features.map(({ id, label, count, message }) => (
-                            <button key={id} className="p-user__card" onClick={() => openPanel(label, message)}>
+                            <button key={id} className="p-user__card" onClick={() => openPanel(label, message, id === "heart" ? "favorites" : undefined)}>
                                 <span className={`p-user__icon p-user__icon--${id}`}><Icon name={id} /></span>
-                                <span>{label}</span><small>{count}</small>
+                                <span>{label}</span><small>{id === "heart" ? `${savedShops.length}店舗` : count}</small>
                             </button>
                         ))}
                     </div>
@@ -58,13 +65,21 @@ export default function User() {
                 </div>
             ) : (
                 <div className="p-user__guest">
-                    <button onClick={() => openPanel("新規登録", "アカウント登録は準備中です。表示名を入力してマイページをプレビューできます。", "preview")}>新規登録</button>
-                    <button onClick={() => openPanel("ログイン", "ログインは準備中です。表示名を入力してマイページをプレビューできます。", "preview")}>ログイン</button>
+                    <button onClick={() => navigate("/role-select")}>新規登録</button>
+                    <button onClick={() => navigate("/auth?mode=login")}>ログイン</button>
                 </div>
             )}
             <dialog className="c-user_dialog" ref={dialog}>
                 <h2>{panel?.title}</h2>
-                <p>{panel?.message}</p>
+                {panel?.type === "favorites" ? (
+                    savedShops.length ? <div className="p-user__links">{savedShops.map((shop) => (
+                        <Link className="c-search_card" key={shop.id} to={`/detail/${shop.id}`} onClick={() => dialog.current.close()}>
+                            <span className="c-map_shop__category">{shop.category}</span>
+                            <h2>{shop.name}</h2>
+                            <p>{shop.address}</p>
+                        </Link>
+                    ))}</div> : <p>行ってみたいお店はまだありません。</p>
+                ) : <p>{panel?.message}</p>}
                 {panel?.type === "preview" && (
                     <form onSubmit={(event) => {
                         event.preventDefault();
