@@ -1,56 +1,64 @@
 @use "variables" as *;
 
 .p-user {
-  max-width: 504px;
+  max-width: 688px;
   min-height: 100dvh;
   margin: auto;
-  padding: 24px 32px calc(104px + env(safe-area-inset-bottom));
+  padding: clamp(64px, 8.8vh, 124px) 12px calc(112px + env(safe-area-inset-bottom));
   background: $color-paper;
 
   &__title {
-    margin: 0 0 40px;
-    font-size: 20px;
-    font-weight: 500;
+    display: none;
+    margin: 0 0 28px;
+    font-size: 22px;
+    font-weight: 600;
     color: $color-ink;
   }
 
   &__dashboard {
-    max-width: 366px;
+    width: min(72%, 464px);
     margin: auto;
   }
 
   &__profile {
     display: flex;
     align-items: center;
-    gap: 28px;
-    margin-bottom: 24px;
+    gap: clamp(16px, 3vw, 36px);
+    margin-bottom: clamp(16px, 2.2vh, 30px);
     overflow-wrap: anywhere;
-    font-size: 18px;
+    font-size: clamp(14px, 3.5vw, 24px);
   }
 
   &__avatar {
-    flex: 0 0 96px;
-    height: 96px;
+    flex: 0 0 clamp(72px, 12.8vw, 144px);
+    height: clamp(72px, 12.8vw, 144px);
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-size: 0;
     border-radius: 50%;
     background: $color-ink;
   }
 
   &__pill {
+    display: flex;
+    align-items: center;
     width: 100%;
-    min-height: 48px;
-    padding: 12px 24px;
+    min-height: clamp(48px, 13vw, 90px);
+    padding: 10px clamp(18px, 7.5vw, 52px);
     border: 1px solid $color-primary;
     border-radius: 9999px;
     background: transparent;
     color: $color-ink;
     text-align: left;
     font-size: 13px;
+    text-decoration: none;
   }
 
   &__stamp {
-    min-height: 64px;
-    font-size: 18px;
-    padding-left: 32px;
+    min-height: clamp(48px, 12.8vw, 90px);
+    font-size: clamp(13px, 3.5vw, 24px);
+    padding-left: clamp(18px, 7.5vw, 52px);
   }
 
   &__checkin {
@@ -59,37 +67,42 @@
     align-items: center;
     gap: 16px;
     width: 100%;
-    min-height: 64px;
-    margin: 24px 0;
+    min-height: clamp(48px, 12.5vw, 86px);
+    margin: clamp(16px, 2.4vh, 36px) 0 clamp(18px, 2.5vh, 34px);
     border: 0;
     border-radius: 9999px;
     background: $color-primary;
     color: white;
     text-align: left;
-    font-size: 18px;
+    font-size: clamp(12px, 3.4vw, 22px);
 
     small {
       display: block;
-      font-size: 10px;
+      font-size: clamp(8px, 2.3vw, 15px);
     }
   }
 
   &__camera {
     display: grid;
     place-items: center;
-    padding-right: 20px;
+    padding-right: 10px;
     border-right: 1px solid #ffffff80;
 
     svg {
-      width: 32px;
-      height: 32px;
+      width: clamp(20px, 7vw, 44px);
+      height: clamp(20px, 7vw, 44px);
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
   }
 
   &__grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 24px 12px;
+    gap: clamp(20px, 3.7vh, 46px) clamp(8px, 2vw, 16px);
   }
 
   &__card {
@@ -97,49 +110,74 @@
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-    min-height: 140px;
-    padding: 20px 16px;
+    min-height: clamp(108px, 28.5vw, 198px);
+    padding: clamp(12px, 2.3vw, 24px);
     border: 1px solid $color-primary;
-    border-radius: 32px;
+    border-radius: 16px;
     background: transparent;
     color: $color-ink;
     text-align: left;
-    font-size: 12px;
+    font-size: clamp(11px, 2.8vw, 18px);
 
     small {
-      margin-top: 4px;
-      font-size: 10px;
+      margin-top: 5px;
+      font-size: clamp(10px, 2.3vw, 15px);
     }
   }
 
   &__icon {
     display: grid;
     place-items: center;
-    width: 34px;
-    height: 34px;
-    margin-bottom: 12px;
+    width: clamp(28px, 6.5vw, 46px);
+    height: clamp(28px, 6.5vw, 46px);
+    margin-bottom: clamp(8px, 1.3vh, 16px);
     border-radius: 50%;
 
     svg {
-      width: 22px;
-      height: 22px;
+      width: 62%;
+      height: 62%;
+      overflow: visible;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
+    .is-filled {
+      fill: currentColor;
+      stroke: currentColor;
+    }
+
+    .is-cutout {
+      fill: #def3ef;
+      stroke: #def3ef;
+    }
+
+    .is-dot {
+      fill: currentColor;
+      stroke: none;
+    }
+
+    &--favorites,
     &--heart {
       color: #eb7285;
       background: #ffe6eb;
     }
 
+    &--visited,
     &--pin {
       color: $color-primary;
       background: #def3ef;
     }
 
+    &--reviews,
     &--review {
       color: #4a9ee9;
       background: #e1efff;
     }
 
+    &--coupons,
     &--ticket {
       color: #e9a64d;
       background: #fff0da;
@@ -148,8 +186,8 @@
 
   &__links {
     display: grid;
-    gap: 16px;
-    margin-top: 32px;
+    gap: clamp(10px, 1.9vh, 28px);
+    margin-top: clamp(24px, 3.2vh, 46px);
   }
 
   &__guest {
@@ -173,7 +211,12 @@
   }
 
   .bottom-nav {
-    max-width: 504px;
+    max-width: 688px;
+  }
+
+  @media (min-width: 640px) {
+    padding-left: 12px;
+    padding-right: 12px;
   }
 }
 
@@ -227,3 +270,9 @@
     background: #e2f2ef;
   }
 }
+
+.p-user__collection { display: grid; gap: 10px; max-height: 55dvh; overflow: auto; }
+.p-user__collection_item { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px; border: 1px solid #35a99a; border-radius: 12px; }
+.p-user__collection_item a, .p-user__collection_item > div { display: grid; gap: 4px; color: inherit; text-decoration: none; }
+.p-user__collection_item small { font-size: 11px; }
+.p-user__collection_item button { flex: 0 0 auto; padding: 8px; border: 0; border-radius: 18px; background: #e2f2ef; color: $color-ink; font-size: 11px; }
