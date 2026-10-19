@@ -1,0 +1,9 @@
+@use "variables" as *;
+
+.p-account-info { max-width: 504px; min-height: 100dvh; margin: auto; padding: 24px 24px calc(104px + env(safe-area-inset-bottom)); background: $color-paper; }
+.p-account-info h1 { margin: 0 0 18px; font-size: 20px; }
+.p-account-info__back { display: inline-block; margin-bottom: 20px; color: $color-ink; font-size: 12px; text-decoration: none; }
+.p-account-info section { margin-bottom: 12px; padding: 16px; border: 1px solid $color-primary; border-radius: 16px; }
+.p-account-info section h2 { margin: 0 0 8px; font-size: 15px; }
+.p-account-info section p { margin: 0; font-size: 13px; line-height: 1.7; }
+.p-account-info .bottom-nav { max-width: 504px; }

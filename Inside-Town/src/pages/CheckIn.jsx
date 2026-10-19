@@ -1,16 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BottomNav from "../components/BottomNav";
-import { shops } from "../data/shops";
+import { getShops } from "../data/shop_storage";
+import { readProfile } from "../data/onboarding_storage";
+import { addVisitedShop, collectRallyStamp, getRally } from "../data/account_activity";
 import "../styles/_check_in.scss";
 
-const shop = {
-  ...shops[2],
-  name: "こもれび菓子店",
-  category: "カフェ・焼き菓子",
-  address: "〒444-0825 愛知県岡崎市羽根町○○ 2-8-14",
-  image: "https://images.unsplash.com/photo-1445116572660-236099ec97a0?auto=format&fit=crop&w=700&q=85&fm=webp",
-};
+const shops = getShops();
+const fallbackShop = { ...shops[2], name: "こもれび菓子店", category: "カフェ・焼き菓子", address: "〒444-0825 愛知県岡崎市羽根町○○ 2-8-14", image: "https://images.unsplash.com/photo-1445116572660-236099ec97a0?auto=format&fit=crop&w=700&q=85&fm=webp" };
 
 function Celebration() {
   return (
@@ -28,6 +25,7 @@ function Celebration() {
 
 export default function CheckIn() {
   const [complete, setComplete] = useState(false);
+  const [scannedShop, setScannedShop] = useState(fallbackShop);
   const [cameraError, setCameraError] = useState("");
   const [scanStatus, setScanStatus] = useState("カメラを起動しています…");
   const navigate = useNavigate();
@@ -41,10 +39,19 @@ export default function CheckIn() {
     if (videoRef.current) videoRef.current.srcObject = null;
   }, []);
 
-  const finishScan = useCallback(() => {
+  const finishScan = useCallback((shopId) => {
     if (completeRef.current) return;
+    const user = readProfile();
+    const rally = getRally(user?.id);
+    const nextRallyShopId = rally?.shopIds?.find((id) => !(rally.stamps || []).includes(String(id)));
+    const shop = shops.find((item) => String(item.id) === String(shopId || nextRallyShopId)) || fallbackShop;
+    setScannedShop(shop);
     completeRef.current = true;
     stopCamera();
+    if (user) {
+      addVisitedShop(user.id, shop.id);
+      collectRallyStamp(user.id, shop.id);
+    }
     setComplete(true);
   }, [stopCamera]);
 
@@ -92,7 +99,15 @@ export default function CheckIn() {
             try {
               const codes = await detector.detect(videoRef.current);
               if (codes.length) {
-                finishScan();
+                const raw = codes[0].rawValue || "";
+                const urlShopId = (() => { try { return new URL(raw).searchParams.get("shop"); } catch { return null; } })();
+                const shopId = raw.match(/^(?:shop:|shop\/)?([\w-]+)$/)?.[1] || urlShopId;
+                if (shopId && shops.some((item) => String(item.id) === shopId)) {
+                  finishScan(shopId);
+                  return;
+                }
+                setScanStatus("このQRコードのお店は見つかりませんでした");
+                scanTimer = window.setTimeout(scan, 1200);
                 return;
               }
             } catch {
@@ -134,7 +149,7 @@ export default function CheckIn() {
             <p className="check-in__instruction">{scanStatus || cameraError}</p>
             {cameraError && <p className="check-in__error" role="status">{cameraError}</p>}
           </div>
-          <button className="check-in__simulate" type="button" onClick={finishScan}>スキャンをシミュレート</button>
+          <button className="check-in__simulate" type="button" onClick={() => finishScan()}>スキャンをシミュレート</button>
         </>
       ) : (
         <section className="check-in__result" aria-live="polite">
@@ -142,14 +157,14 @@ export default function CheckIn() {
           <Celebration />
           <h1>来店チェックが完了しました！</h1>
           <article className="check-in__shop">
-            <img src={shop.image} alt={`${shop.name}の店舗外観`} />
+            <img src={scannedShop.image || fallbackShop.image} alt={`${scannedShop.name}の店舗外観`} />
             <div>
-              <h2>{shop.name}</h2>
-              <p>{shop.category}</p>
-              <address>{shop.address}</address>
+              <h2>{scannedShop.name}</h2>
+              <p>{scannedShop.category}</p>
+              <address>{scannedShop.address}</address>
             </div>
           </article>
-          <Link className="check-in__review" to={`/detail/${shop.id}`}>口コミを書く</Link>
+          <Link className="check-in__review" to={`/detail/${scannedShop.id}`}>口コミを書く</Link>
         </section>
       )}
       <BottomNav />

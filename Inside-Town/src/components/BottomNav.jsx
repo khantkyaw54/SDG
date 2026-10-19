@@ -20,8 +20,8 @@ export default function BottomNav() {
         >
           <span className="bottom-nav__icon">
             <svg
-              width="32"
-              height="32"
+              width="38"
+              height="38"
               fill="none"
               stroke="currentColor"
               strokeWidth="1.7"
