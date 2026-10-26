@@ -279,14 +279,12 @@
   &__progress > .p-rally__text_button, &__progress > .p-rally__cancel { align-self: center; min-height: 32px; padding: 4px 12px; border: 0; background: transparent; color: $color-ink; font-size: 12px; }
   &__progress > .p-rally__cancel { color: #f04444; }
 
-  &__done { align-items: center; justify-content: center; gap: 22px; text-align: center; }
-  &__close { position: absolute; top: 22px; right: 22px; width: 48px; height: 48px; border: 0; background: transparent; color: $color-ink; font-size: 40px; font-weight: 300; }
-  &__celebration { position: relative; width: min(78%, 390px); margin-top: 44px; color: #33aa9b; }
-  &__celebration svg { width: 100%; }
-  &__celebration span, &__celebration i, &__celebration em { position: absolute; color: #e7b84f; font-size: 18px; font-style: normal; }
-  &__celebration span { top: 10%; left: 14%; } &__celebration i { top: 20%; right: 13%; color: #ef6557; } &__celebration em { bottom: 10%; left: 24%; color: #2fa99a; }
-  &__done h1 { font-weight: 700; }
-  &__done p { margin: 0; font-size: 13px; }
+  &__done { position: relative; align-items: center; justify-content: center; gap: 18px; padding: 32px 0 24px; text-align: center; }
+  &__close { position: absolute; top: 0; right: 0; width: 48px; height: 48px; border: 0; background: transparent; color: $color-ink; font-size: 40px; font-weight: 300; cursor: pointer; }
+  &__celebration { width: min(88%, 390px); margin-top: 32px; }
+  &__celebration svg { display: block; width: 100%; height: auto; }
+  &__done h1 { max-width: 100%; font-weight: 700; line-height: 1.5; }
+  &__done p { margin: 0; font-size: clamp(13px, 3.5vw, 17px); line-height: 1.65; }
   &__done .p-rally__primary { width: min(100%, 300px); min-height: 56px; margin-top: 10px; font-size: 15px; }
 }
 

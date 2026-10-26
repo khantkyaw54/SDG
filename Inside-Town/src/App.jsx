@@ -14,6 +14,7 @@ import Search from "./pages/Search";
 import User from "./pages/User";
 import CheckIn from "./pages/CheckIn";
 import StampRally from "./pages/StampRally";
+import Coupons from "./pages/Coupons";
 import AccountInfo from "./pages/AccountInfo";
 
 import ShopPortal from "./pages/shop_portal";
@@ -73,6 +74,7 @@ function App() {
         <Route path="/user" element={<User />} />
         <Route path="/check-in" element={<CheckIn />} />
         <Route path="/stamp-rally" element={<StampRally />} />
+        <Route path="/coupons" element={<Coupons />} />
         <Route path="/account/:section" element={<AccountInfo />} />
         <Route path="/shop" element={<ShopPortal />} />
         <Route path="/government" element={<GovernmentPortal />} />

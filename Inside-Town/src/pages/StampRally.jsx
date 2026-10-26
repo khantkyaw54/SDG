@@ -15,6 +15,21 @@ function StampMark() {
   return <svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="52" fill="currentColor"/><circle cx="60" cy="60" r="43" fill="none" stroke="white" strokeWidth="3"/><path d="M60 34a12 12 0 0 0-12 12c0 9 12 20 12 20s12-11 12-20a12 12 0 0 0-12-12Z" fill="white"/><circle cx="60" cy="46" r="4" fill="currentColor"/><path d="M41 75h38v7H41zm6 11h26v5H47z" fill="white"/></svg>;
 }
 
+function RallyCelebration() {
+  return <svg viewBox="0 0 300 220" role="img" aria-label="スタンプラリー達成のお祝い">
+    <g strokeLinecap="round" strokeWidth="5">
+      <path d="m34 45 7 8m-17 5 11-2m44-30 2 9m-9-2 8-3m153 23 8-8m-3 16 9-2m-29 105 8-5m-4 12 7-4m-144-8-7-8m17 4-9 2m182-75 8 5m-2-12 7 5" fill="none" stroke="#f0bd3f"/>
+      <path d="m54 103-8-8m-3 12 8-4m46-77 4 8m114 132 7-7m-3 13 8-4m-161-27-7 3m187-92 7-6m-11-4 3 7" fill="none" stroke="#ef6557"/>
+      <path d="m27 142 3-9m-9 5 8-1m219-74 4 8m-5 116 7-4m-164-3-4 8m102-152 2 8" fill="none" stroke="#36b8a6"/>
+    </g>
+    <path d="M150 26c9 0 13 10 21 13s19-1 25 6 2 18 6 26 15 12 15 21-10 14-13 22 1 19-6 26-18 2-26 6-12 15-22 15-14-10-22-13-19 1-26-6-2-18-6-26-15-12-15-22 10-14 13-22-1-19 6-26 18-2 26-6 12-14 24-14Z" fill="#39b29f"/>
+    <circle cx="150" cy="105" r="55" fill="#2fa99a" stroke="#fff" strokeWidth="4"/>
+    <circle cx="150" cy="105" r="47" fill="none" stroke="#fff" strokeWidth="3"/>
+    <circle cx="150" cy="87" r="9" fill="#fff"/>
+    <path d="M135 104c0-7 6-12 15-12s15 5 15 12v14h-30zm-10 18h50v7h-50z" fill="#fff"/>
+  </svg>;
+}
+
 function CityMap({ shops, selectedIds, onToggle }) {
   return <div className="p-rally__map">
     <svg className="p-rally__map_art" viewBox="0 0 500 420" preserveAspectRatio="none" aria-hidden="true">
@@ -152,10 +167,10 @@ export default function StampRally() {
 
     {stage === "complete" && <section className="p-rally__done" aria-live="polite">
       <button className="p-rally__close" aria-label="閉じる" onClick={() => navigate("/user")}>×</button>
-      <div className="p-rally__celebration"><StampMark/><span>✦</span><i>✦</i><em>✦</em></div>
+      <div className="p-rally__celebration"><RallyCelebration /></div>
       <h1>スタンプラリーが完了しました！</h1>
       <p>3店舗のご来店ありがとうございます。</p><p>{rally?.city || "岡崎市"}で使えるクーポンをプレゼントしました。</p>
-      <Link className="p-rally__primary" to="/user?open=coupons">クーポンを確認する</Link>
+      <Link className="p-rally__primary" to="/coupons">クーポンを確認する</Link>
     </section>}
     <BottomNav />
   </main>;
