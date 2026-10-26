@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import BottomNav from "../components/BottomNav";
 import { getShops } from "../data/shop_storage";
 import { readProfile } from "../data/onboarding_storage";
@@ -8,6 +8,34 @@ import "../styles/_check_in.scss";
 
 const shops = getShops();
 const fallbackShop = { ...shops[2], name: "こもれび菓子店", category: "カフェ・焼き菓子", address: "〒444-0825 愛知県岡崎市羽根町○○ 2-8-14", image: "https://images.unsplash.com/photo-1445116572660-236099ec97a0?auto=format&fit=crop&w=700&q=85&fm=webp" };
+
+function findScannedShop(rawValue) {
+  const raw = String(rawValue || "").trim();
+  if (!raw) return null;
+  const candidates = [raw];
+
+  try {
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === "object") {
+      candidates.push(parsed.shopId, parsed.shop_id, parsed.shop, parsed.id, parsed.name);
+    }
+  } catch { /* QR contents can also be plain text or a URL. */ }
+
+  try {
+    const url = new URL(raw);
+    for (const key of ["shop", "shopId", "shop_id", "id"]) candidates.push(url.searchParams.get(key));
+    const pathParts = url.pathname.split("/").filter(Boolean);
+    candidates.push(pathParts.at(-1));
+  } catch { /* Not a URL. */ }
+
+  const tag = raw.match(/(?:shop(?:_id|Id)?[:=/])([\w-]+)/i);
+  if (tag) candidates.push(tag[1]);
+
+  return shops.find((shop) => candidates.some((candidate) => candidate != null && (
+    String(shop.id).toLowerCase() === String(candidate).trim().toLowerCase() ||
+    shop.name.trim().toLowerCase() === String(candidate).trim().toLowerCase()
+  ))) || null;
+}
 
 function Celebration() {
   return (
@@ -25,101 +53,68 @@ function Celebration() {
 
 export default function CheckIn() {
   const [complete, setComplete] = useState(false);
+  const [rallyCompleted, setRallyCompleted] = useState(false);
   const [scannedShop, setScannedShop] = useState(fallbackShop);
   const [cameraError, setCameraError] = useState("");
   const [scanStatus, setScanStatus] = useState("カメラを起動しています…");
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const requestedShopId = searchParams.get("shop");
   const videoRef = useRef(null);
-  const streamRef = useRef(null);
+  const scannerRef = useRef(null);
   const completeRef = useRef(false);
 
   const stopCamera = useCallback(() => {
-    streamRef.current?.getTracks().forEach((track) => track.stop());
-    streamRef.current = null;
+    scannerRef.current?.stop();
+    scannerRef.current = null;
     if (videoRef.current) videoRef.current.srcObject = null;
   }, []);
 
-  const finishScan = useCallback((shopId) => {
+  const finishScan = useCallback((shop) => {
     if (completeRef.current) return;
     const user = readProfile();
     const rally = getRally(user?.id);
-    const nextRallyShopId = rally?.shopIds?.find((id) => !(rally.stamps || []).includes(String(id)));
-    const shop = shops.find((item) => String(item.id) === String(shopId || nextRallyShopId)) || fallbackShop;
-    setScannedShop(shop);
+    const nextRallyShopId = rally?.shopIds?.find((id) => !(rally.stamps || []).map(String).includes(String(id)));
+    const resolvedShop = shop || shops.find((item) => String(item.id) === String(requestedShopId || nextRallyShopId)) || fallbackShop;
+    setScannedShop(resolvedShop);
     completeRef.current = true;
     stopCamera();
     if (user) {
-      addVisitedShop(user.id, shop.id);
-      collectRallyStamp(user.id, shop.id);
+      addVisitedShop(user.id, resolvedShop.id);
+      collectRallyStamp(user.id, resolvedShop.id);
+      setRallyCompleted(Boolean(getRally(user.id)?.completed));
     }
     setComplete(true);
-  }, [stopCamera]);
+  }, [requestedShopId, stopCamera]);
 
   useEffect(() => {
     if (complete) return undefined;
     let cancelled = false;
-    let scanTimer;
-    let detector;
-
     async function startCamera() {
       if (!navigator.mediaDevices?.getUserMedia) {
         setCameraError("このブラウザーではカメラを利用できません。HTTPS または localhost で開いてください。");
         return;
       }
-      if (!("BarcodeDetector" in window)) {
-        setCameraError("カメラは利用できますが、このブラウザーはQRコード読み取りに対応していません。Chrome または Android の対応ブラウザーでお試しください。");
-      } else {
-        try {
-          const formats = await window.BarcodeDetector.getSupportedFormats();
-          if (formats.includes("qr_code")) detector = new window.BarcodeDetector({ formats: ["qr_code"] });
-          else setCameraError("このブラウザーのQRコード形式には対応していません。");
-        } catch {
-          setCameraError("QRコード読み取り機能を初期化できませんでした。");
-        }
-      }
-
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({
+        const { BrowserMultiFormatReader } = await import("@zxing/browser");
+        if (cancelled) return;
+        const reader = new BrowserMultiFormatReader();
+        const controls = await reader.decodeFromConstraints({
           audio: false,
           video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 }, height: { ideal: 1920 } },
+        }, videoRef.current, (result, _error, activeControls) => {
+          if (activeControls) scannerRef.current = activeControls;
+          if (cancelled || completeRef.current || !result) return;
+          const matchedShop = findScannedShop(result.getText());
+          if (matchedShop) finishScan(matchedShop);
+          else setScanStatus("このQRコードのお店は見つかりませんでした");
         });
-        if (cancelled) {
-          stream.getTracks().forEach((track) => track.stop());
-          return;
-        }
-        streamRef.current = stream;
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          await videoRef.current.play();
-          setScanStatus(detector ? "QRコードを枠内に合わせてください" : "カメラ映像を表示中");
-        }
-        if (detector) {
-          const scan = async () => {
-            if (cancelled || completeRef.current || !videoRef.current || videoRef.current.readyState < 2) return;
-            try {
-              const codes = await detector.detect(videoRef.current);
-              if (codes.length) {
-                const raw = codes[0].rawValue || "";
-                const urlShopId = (() => { try { return new URL(raw).searchParams.get("shop"); } catch { return null; } })();
-                const shopId = raw.match(/^(?:shop:|shop\/)?([\w-]+)$/)?.[1] || urlShopId;
-                if (shopId && shops.some((item) => String(item.id) === shopId)) {
-                  finishScan(shopId);
-                  return;
-                }
-                setScanStatus("このQRコードのお店は見つかりませんでした");
-                scanTimer = window.setTimeout(scan, 1200);
-                return;
-              }
-            } catch {
-              // Ignore transient camera frames and keep scanning.
-            }
-            scanTimer = window.setTimeout(scan, 250);
-          };
-          scan();
-        }
+        scannerRef.current = controls;
+        if (cancelled) controls.stop();
+        else setScanStatus("QRコードを枠内に合わせてください");
       } catch (error) {
         if (cancelled) return;
-        const message = error.name === "NotAllowedError"
+        const message = error.name === "NotAllowedError" || error.name === "PermissionDeniedError"
           ? "カメラの使用が許可されていません。ブラウザーの設定でカメラを許可してください。"
           : error.name === "NotFoundError"
             ? "利用できるカメラが見つかりませんでした。"
@@ -132,7 +127,6 @@ export default function CheckIn() {
     startCamera();
     return () => {
       cancelled = true;
-      window.clearTimeout(scanTimer);
       stopCamera();
     };
   }, [complete, finishScan, stopCamera]);
@@ -149,11 +143,11 @@ export default function CheckIn() {
             <p className="check-in__instruction">{scanStatus || cameraError}</p>
             {cameraError && <p className="check-in__error" role="status">{cameraError}</p>}
           </div>
-          <button className="check-in__simulate" type="button" onClick={() => finishScan()}>スキャンをシミュレート</button>
+          <button className="check-in__simulate" type="button" onClick={() => finishScan(findScannedShop(requestedShopId))}>スキャンをシミュレート</button>
         </>
       ) : (
         <section className="check-in__result" aria-live="polite">
-          <button className="check-in__close" type="button" aria-label="閉じる" onClick={() => navigate(-1)}>×</button>
+          <button className="check-in__close" type="button" aria-label="閉じる" onClick={() => rallyCompleted ? navigate("/stamp-rally?step=complete", { replace: true }) : navigate(-1)}>×</button>
           <Celebration />
           <h1>来店チェックが完了しました！</h1>
           <article className="check-in__shop">

@@ -76,7 +76,7 @@ export default function User() {
           </button>
           <div className="p-user__grid">
             {cards.map(({ id, label }) => (
-              <button key={id} className="p-user__card" onClick={() => openSection(id)}>
+              <button key={id} className="p-user__card" onClick={() => id === "coupons" ? navigate("/coupons") : openSection(id)}>
                 <span className={`p-user__icon p-user__icon--${id}`}><CardIcon name={id} /></span>
                 <span>{label}</span><small>{counts[id]}{id === "favorites" || id === "visited" ? "店舗" : id === "coupons" ? "枚" : "件"}</small>
               </button>

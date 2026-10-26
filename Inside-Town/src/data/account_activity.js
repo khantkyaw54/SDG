@@ -39,6 +39,16 @@ export function getCoupons(userId) {
   return Array.isArray(coupons) ? coupons : [];
 }
 
+export function markCouponUsed(userId, couponId) {
+  const coupons = getCoupons(userId);
+  const coupon = coupons.find((item) => String(item.id) === String(couponId));
+  if (!coupon || coupon.usedAt) return coupon || null;
+  const usedAt = new Date().toISOString();
+  const updated = { ...coupon, usedAt };
+  update(userId, { coupons: coupons.map((item) => String(item.id) === String(couponId) ? updated : item) });
+  return updated;
+}
+
 export function getRally(userId) {
   return accountData(userId).rally || null;
 }
@@ -66,10 +76,20 @@ export function collectRallyStamp(userId, shopId) {
   const completed = stamps.length >= requiredIds.length;
   const coupons = accountData(userId).coupons || [];
   const couponId = `rally-${rally.city}-${rally.shopIds.join("-")}`;
+  const issuedAt = new Date();
+  const validUntil = new Date(issuedAt.getTime() + 6 * 24 * 60 * 60 * 1000);
   update(userId, {
     rally: { ...rally, stamps, completed },
     ...(completed && !coupons.some((coupon) => coupon.id === couponId)
-      ? { coupons: [...coupons, { id: couponId, title: `${rally.city}で使える500円クーポン`, description: "スタンプラリー達成特典" }] }
+      ? { coupons: [...coupons, {
+        id: couponId,
+        city: rally.city,
+        title: `${rally.city} 地域応援お食事クーポン 500円分`,
+        description: "スタンプラリー達成特典",
+        validFrom: issuedAt.toISOString(),
+        validUntil: validUntil.toISOString(),
+        usedAt: null,
+      }] }
       : {}),
   });
 }

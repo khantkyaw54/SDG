@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@zxing/browser": "^0.2.1",
     "gasp": "^0.0.2",
     "gsap": "^3.15.0",
     "maplibre-gl": "^6.11.2",

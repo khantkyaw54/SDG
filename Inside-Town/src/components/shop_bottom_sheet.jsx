@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ShopInfoTab from "./shop_info_tab";
 import ReviewsTab from "./reviews_tab";
 import "../styles/_shop_bottom_sheet.scss";
@@ -23,6 +23,7 @@ function ShopContent({ shop, open, onClose, onRoute, onCancelRoute, routeStatus 
   const [tab, setTab] = useState("info");
   const [message, setMessage] = useState("");
   const { profile, favorites } = useAccountFavorites();
+  const navigate = useNavigate();
   const saved = favorites.includes(String(shop.id));
   const closeButton = useRef(null);
   const close = useRef(onClose);
@@ -67,7 +68,7 @@ function ShopContent({ shop, open, onClose, onRoute, onCancelRoute, routeStatus 
         </header>
         <div className="c-shop_sheet__actions">
           <button type="button" className="c-shop_sheet__action" aria-pressed={saved} onClick={toggleSaved}>{saved ? "行ってみたい ✓" : "行ってみたい"}</button>
-          <button type="button" className="c-shop_sheet__action" onClick={() => setMessage("QRコードによる来店確認は準備中です。")}>
+          <button type="button" className="c-shop_sheet__action" onClick={() => navigate(`/check-in?shop=${encodeURIComponent(shop.id)}`)}>
             <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor" aria-hidden="true"><path d="M8 3 6 6H3a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-3l-2-3H8Zm4 5a5.5 5.5 0 1 1 0 11 5.5 5.5 0 0 1 0-11Zm0 2a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z" /></svg>
             <span>来店確認<small>QRコードを読み込む</small></span>
           </button>
